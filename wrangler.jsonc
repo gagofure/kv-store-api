@@ -16,7 +16,7 @@
 	"kv_namespaces": [
 		{
 			"binding": "MY_KV",
-			"id": "4efabad791454272816e233807494996",
+			"id": "YOUR_KV_NAMESPACE_ID",
 			"remote": true
 		}
 	]

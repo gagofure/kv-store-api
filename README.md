@@ -1,7 +1,3 @@
-Here’s a `README.md` tailored for `kv-store-api` that matches the kind of Worker we discussed.
-
-***
-
 # kv-store-api
 
 A simple **Cloudflare Workers KV** project that exposes a minimal key‑value HTTP API:
@@ -206,3 +202,4 @@ kv-store-api/
 ├─ wrangler.json    # Wrangler configuration (account_id, kv_namespaces, etc.)
 └─ README.md
 ```
+
