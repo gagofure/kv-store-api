@@ -10,11 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Replace KV_NAMESPACE_ID in wrangler.jsonc
+        run: |
+          sed -i "s|\${KV_NAMESPACE_ID}|${{ secrets.KV_NAMESPACE_ID }}|g" wrangler.jsonc
+
       - name: Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerVersion: "4.67.0" # or just "4"
-        env:
-          KV_NAMESPACE_ID: ${{ secrets.KV_NAMESPACE_ID }}
+          wranglerVersion: "4.67.0"
