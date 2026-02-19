@@ -2,6 +2,7 @@ name: Deploy Worker
 on:
   push:
     branches: [master]
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -14,5 +15,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.67.0" # or just "4"
         env:
           KV_NAMESPACE_ID: ${{ secrets.KV_NAMESPACE_ID }}
