@@ -10,11 +10,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Replace KV_NAMESPACE_ID in wrangler.jsonc
+      - name: Replace IDs in wrangler.jsonc
         run: |
-          # quote the sed expression to avoid expansion of regex metacharacters
-          # the secret is appended in double quotes so the shell expands it
+          # Replace KV_NAMESPACE_ID
           sed -i 's|\${KV_NAMESPACE_ID}|'"${{ secrets.KV_NAMESPACE_ID }}"'|g' wrangler.jsonc
+          # Replace RATE_LIMIT_KV_ID
+          sed -i 's|\${RATE_LIMIT_KV_ID}|'"${{ secrets.RATE_LIMIT_KV_ID }}"'|g' wrangler.jsonc
 
       - name: Deploy Worker
         uses: cloudflare/wrangler-action@v3

@@ -1,5 +1,40 @@
 export interface Env {
   MY_KV: KVNamespace
+  RATE_LIMIT_KV: KVNamespace
+}
+
+// Rate limiting constants
+const RATE_LIMIT_REQUESTS = 30 // requests per minute
+const RATE_LIMIT_WINDOW = 60 * 1000 // 1 minute in ms
+
+function getRateLimitKey(request: Request): string {
+  return request.headers.get("CF-Connecting-IP") || "unknown"
+}
+
+async function isRateLimited(key: string, env: Env): Promise<boolean> {
+  const now = Date.now()
+  const windowKey = Math.floor(now / 60000) // bucket per minute
+  const countKey = `ratelimit:${key}:${windowKey}`
+
+  try {
+    const countStr = await env.RATE_LIMIT_KV.get(countKey)
+    const currentCount = countStr ? parseInt(countStr) : 0
+
+    if (currentCount >= RATE_LIMIT_REQUESTS) {
+      return true
+    }
+
+    // Increment the counter
+    await env.RATE_LIMIT_KV.put(countKey, (currentCount + 1).toString(), {
+      expirationTtl: 120, // expire after 2 minutes
+    })
+
+    return false
+  } catch (error) {
+    console.error("Rate limit check failed:", error)
+    // On error, allow the request through
+    return false
+  }
 }
 
 export default {
@@ -7,6 +42,19 @@ export default {
     const url = new URL(request.url)
     const path = url.pathname
     const method = request.method
+
+    // Check rate limit
+    const clientKey = getRateLimitKey(request)
+    if (await isRateLimited(clientKey, env)) {
+      return Response.json(
+        {
+          error: "Rate limit exceeded",
+          message: `Maximum ${RATE_LIMIT_REQUESTS} requests per minute allowed`,
+          retryAfter: RATE_LIMIT_WINDOW / 1000,
+        },
+        { status: 429, headers: { "Retry-After": "60" } }
+      )
+    }
 
     try {
       // ----------------------------
