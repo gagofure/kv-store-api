@@ -1,3 +1,5 @@
+[![Deploy Worker](https://github.com/gagofure/kv-store-api/actions/workflows/deploy-worker.yml/badge.svg)](https://github.com/gagofure/kv-store-api/actions/workflows/deploy-worker.yml)
+
 # kv-store-api
 
 A simple **Cloudflare Workers KV** project that exposes a minimal key‑value HTTP API:
