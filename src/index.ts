@@ -123,6 +123,112 @@ export default {
         })
       }
 
+      // ----------------------------
+      // GET individual student: /students/:id
+      // ----------------------------
+      const studentPrefix = "/students/"
+      if (path.startsWith(studentPrefix) && method === "GET") {
+        const studentId = path.slice(studentPrefix.length)
+        
+        try {
+          const studentsData = await env.MY_KV.get("students")
+          if (!studentsData) {
+            return Response.json({ error: "No students found" }, { status: 404 })
+          }
+
+          const students = JSON.parse(studentsData)
+          const student = students.find((s: any) => s.key === `student:${studentId}`)
+
+          if (!student) {
+            return Response.json({ error: "Student not found" }, { status: 404 })
+          }
+
+          return Response.json({
+            id: student.key,
+            data: JSON.parse(student.value)
+          })
+        } catch (err) {
+          return Response.json({ error: "Failed to parse students data" }, { status: 500 })
+        }
+      }
+
+      // ----------------------------
+      // GET all students: /students
+      // ----------------------------
+      if (path === "/students" && method === "GET") {
+        try {
+          const studentsData = await env.MY_KV.get("students")
+          if (!studentsData) {
+            return Response.json({ error: "No students found" }, { status: 404 })
+          }
+
+          const students = JSON.parse(studentsData)
+          const formatted = students.map((s: any) => ({
+            id: s.key,
+            data: JSON.parse(s.value)
+          }))
+
+          return Response.json({ students: formatted })
+        } catch (err) {
+          return Response.json({ error: "Failed to parse students data" }, { status: 500 })
+        }
+      }
+
+      // ----------------------------
+      // Health check for root
+      // ----------------------------
+
+      // ----------------------------
+      // GET all sales: /sales
+      // ----------------------------
+      if (path === "/sales" && method === "GET") {
+        try {
+          const salesData = await env.MY_KV.get("sales")
+          if (!salesData) {
+            return Response.json({ error: "No sales found" }, { status: 404 })
+          }
+
+          const sales = JSON.parse(salesData)
+          const formatted = sales.map((s: any) => ({
+            id: s.key,
+            data: JSON.parse(s.value)
+          }))
+
+          return Response.json({ sales: formatted })
+        } catch (err) {
+          return Response.json({ error: "Failed to parse sales data" }, { status: 500 })
+        }
+      }
+
+      // ----------------------------
+      // GET individual sale: /sales/:id
+      // ----------------------------
+      const salePrefix = "/sales/"
+      if (path.startsWith(salePrefix) && method === "GET") {
+        const saleId = path.slice(salePrefix.length)
+        
+        try {
+          const salesData = await env.MY_KV.get("sales")
+          if (!salesData) {
+            return Response.json({ error: "No sales found" }, { status: 404 })
+          }
+
+          const sales = JSON.parse(salesData)
+          const sale = sales.find((s: any) => s.key === `sales:${saleId}`)
+
+          if (!sale) {
+            return Response.json({ error: "Sale not found" }, { status: 404 })
+          }
+
+          return Response.json({
+            id: sale.key,
+            data: JSON.parse(sale.value)
+          })
+        } catch (err) {
+          return Response.json({ error: "Failed to parse sales data" }, { status: 500 })
+        }
+      }
+
       return Response.json({ error: "Not Found" }, { status: 404 })
 
     } catch (error) {
