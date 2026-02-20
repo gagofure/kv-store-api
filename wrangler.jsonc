@@ -17,6 +17,11 @@
 			"id": "${KV_NAMESPACE_ID}",
 			"remote": true,
 		},
+		{
+			"binding": "RATE_LIMIT_KV",
+			"id": "${RATE_LIMIT_KV_ID}",
+			"remote": true,
+		},
 	],
 	/**
 	 * Smart Placement
